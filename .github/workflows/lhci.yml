@@ -1,0 +1,66 @@
+name: Google Lighthouse
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    paths-ignore:
+      - ".vscode/**"
+      - "_headers"
+  pull_request:
+    paths-ignore:
+      - ".vscode/**"
+      - "_headers"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: step-security/harden-runner@v2
+        with:
+            egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          # Python 3.7 is latest supported on CF
+          python-version: 3.7
+          check-latest: true
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: MkDocs cache
+        uses: actions/cache@v3
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+      - run: mkdocs build
+        env:
+            CARDS: true
+      - uses: actions/upload-artifact@v3
+        with:
+          name: site
+          path: ${{ github.workspace }}/site/
+          if-no-files-found: error
+  lhci:
+    name: Lighthouse
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: step-security/harden-runner@v2
+        with:
+          disable-sudo: true
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          check-latest: true
+      - run: npm install -D @lhci/cli@latest
+      - run: npx lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

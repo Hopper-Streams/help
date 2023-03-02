@@ -1,0 +1,55 @@
+name: Generate Docs debug
+
+on:
+  workflow_dispatch:
+    inputs:
+      useMkDocsCache:
+        description: 'MkDocs use caching'
+        required: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Python 3.7 is latest supported on CF, test all versions from that to latest beta
+        py: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12.0-alpha - 3.12.x']
+    steps:
+      - uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        id: sp
+        with:
+          python-version: ${{ matrix.py }}
+          check-latest: true
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: MkDocs cache
+        if: ${{ inputs.useMkDocsCache }}
+        uses: actions/cache@v3
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+      - run: mkdocs build
+        env:
+          CARDS: true
+      - run: find . -type f -exec sha256sum {} \; > 'py${{ steps.sp.outputs.python-version }}_hashes.sha256'
+      - uses: actions/upload-artifact@v3
+        with:
+          name: py${{ steps.sp.outputs.python-version }}_hashes.sha256
+          path: '${{ github.workspace }}/py${{ steps.sp.outputs.python-version }}_hashes.sha256'
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v3
+        with:
+          name: py${{ steps.sp.outputs.python-version }}
+          path: ${{ github.workspace }}
+          if-no-files-found: error

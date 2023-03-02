@@ -1,0 +1,111 @@
+site_name: Hopper Help
+site_url: https://help.hopper.video/
+site_author: Hopper Team
+repo_name: Hopper-Streams/help
+repo_url: https://github.com/Hopper-Streams/help
+edit_uri: edit/main/docs/
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  # Enables highlighting of source code in code blocks using the highlight.js JavaScript library
+  highlightjs: true
+  # Lists the homepage in the sidebar menu. As MkDocs requires that the homepage be listed in the nav configuration option, this setting allows the homepage to be included or excluded from the sidebar. Note that the site name/logo always links to the homepage.
+  include_homepage_in_sidebar: false
+  # One of bottom, top, both , or none. Displays the “Next” and “Previous” buttons accordingly
+  prev_next_buttons_location: none
+  # The maximum depth of the navigation tree in the sidebar. Default: 4
+  navigation_depth: 5
+  # Only include the page section headers in the sidebar for the current page
+  collapse_navigation: true
+  # Only include page titles in the sidebar, excluding all section headers for all pages
+  titles_only: false
+  # If True, causes the sidebar to scroll with the main page content as you scroll the page
+  sticky_navigation: true
+  # The locale (language/location) used to build the theme. If your locale is not yet supported, it will fallback to the default
+  locale: en
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: taproot
+      accent: leaves
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for oled dark mode
+    - media: "(prefers-color-scheme: dark) and (dynamic-range: high)"
+      scheme: oled
+      primary: taproot
+      accent: leaves
+      toggle:
+        icon: material/lightbulb-night-outline
+        name: Switch to light mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark) and (dynamic-range: standard)"
+      scheme: darkgray
+      primary: taproot
+      accent: leaves
+      toggle:
+        icon: material/brightness-4
+        name: Switch to oled dark mode
+  font:
+    text: Roboto
+    code: Red Hat Mono
+  features:
+    - navigation.instant
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.tracking
+    - toc.follow
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.action.edit
+    - content.action.view
+extra_css:
+  - stylesheets/fullWidth.css
+  - stylesheets/theme.css
+markdown_extensions:
+  - smarty
+  - toc:
+      permalink: "#"
+      separator: "_"
+  - sane_lists
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.betterem
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+hooks:
+  - hooks/preSetup.py
+  - hooks/lessCompiler.py
+  - hooks/postSetup.py
+plugins:
+  - search
+  - tags
+  - minify:
+      minify_html: true
+      htmlmin_opts:
+        remove_comments: true
+        reduce_boolean_attributes: true
+      minify_js: true
+      minify_css: true
+      cache_safe: true
+      css_files:
+        - stylesheets/fullWidth.css
+        - stylesheets/theme.css
+  - git-revision-date-localized:
+      type: timeago
+      fallback_to_build_date: true
+  - exclude:
+      glob:
+        - "*.less"
+  - glightbox
+  - social:
+      cards: !ENV [CARDS, false]
