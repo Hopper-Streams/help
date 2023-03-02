@@ -6,3 +6,6 @@
   Referrer-Policy: no-referrer
   Permissions-Policy: document-domain=()
   Expect-CT: max-age=86400, enforce
+
+https://:subdomain.:project.pages.dev/*
+  X-Robots-Tag: noindex
