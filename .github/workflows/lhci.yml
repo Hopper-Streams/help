@@ -49,7 +49,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         formFactor: [mobile, desktop]
         include:
