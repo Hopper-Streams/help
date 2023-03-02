@@ -59,7 +59,18 @@ jobs:
         with:
           node-version: lts/*
           check-latest: true
+      # Setup lhci
       - run: npm install -D @lhci/cli@latest
-      - run: npx lhci autorun
+      # Run mobile
+      # Using iPhone 14 size https://blisk.io/devices/details/iphone-14
+      - run: npx lhci collect --settings.formFactor mobile --settings.screenEmulation.width 390 --settings.screenEmulation.height 844 --settings.screenEmulation.deviceScaleFactor 3
+      - run: npx lhci assert
+      - run: npx lhci upload --githubStatusContextSuffix /mobile
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      # Run desktop
+      - run: npx lhci collect --settings.formFactor desktop --settings.screenEmulation.width 1920 --settings.screenEmulation.height 1080 --settings.screenEmulation.mobile false
+      - run: npx lhci assert
+      - run: npx lhci upload --githubStatusContextSuffix /desktop
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
