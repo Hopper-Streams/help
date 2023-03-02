@@ -17,7 +17,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - uses: step-security/harden-runner@v2
         with:
