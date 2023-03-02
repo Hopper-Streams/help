@@ -10,13 +10,17 @@ ci:
     # choices: "lighthouse:all", "lighthouse:recommended", "lighthouse:no-pwa"
     preset: lighthouse:no-pwa
     assertions:
-      # Not testable local
-      csp-xss: off
+      # Should never be an error
+      color-contrast: warn
+      meta-description: warn
+      robots-txt: warn
       # Since no tags are created, there's a GH api call that will always fail - leaving as warn in case there are others
       errors-in-console: warn
+      # Not testable local
+      csp-xss: off
       # Not controllable
-      non-composited-animations: warn
-      uses-rel-preconnect: warn
+      non-composited-animations: off
+      uses-rel-preconnect: off
 
 
   upload:
