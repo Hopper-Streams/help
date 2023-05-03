@@ -1,4 +1,4 @@
-mkdocs==1.4.2
+mkdocs==1.4.3
 mkdocs-material==9.1.5
 lesscpy==0.15.1
 CairoSVG==2.7.0
